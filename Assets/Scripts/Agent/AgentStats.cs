@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AgentStats : MonoBehaviour
 {
@@ -10,6 +11,12 @@ public class AgentStats : MonoBehaviour
    public float fun = 100;
 
    public float happiness = 0;
+
+[Header("UI")]
+   public Image hungerBar;
+   public Image energyBar;
+   public Image funBar;
+   public Image happinessBar;
     void Start()
     {
      statsUI = GetComponent<StatsUI>();
@@ -59,5 +66,13 @@ public class AgentStats : MonoBehaviour
     statsUI.energyValue.text = energy.ToString();
     statsUI.funValue.text = fun.ToString();
     statsUI.happinessValue.text = happiness.ToString();
+
+    hungerBar.fillAmount = hunger/100;
+   energyBar.fillAmount = energy/100;
+   funBar.fillAmount = fun/100;
+   happinessBar.fillAmount = happiness/100;
+
+
+
    }
 }
