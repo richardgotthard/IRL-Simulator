@@ -6,6 +6,10 @@ public class AgentStats : MonoBehaviour
 {
    StatsUI statsUI;
    public float hunger = 100;
+   public float energy = 100;
+   public float fun = 100;
+
+   public float happiness = 0;
     void Start()
     {
      statsUI = GetComponent<StatsUI>();
@@ -21,12 +25,39 @@ public class AgentStats : MonoBehaviour
     void DecayNeeds(float _deltaTime)
     {
 
-        hunger -= _deltaTime;
+        hunger = Mathf.Clamp(hunger - _deltaTime/(0.02f*hunger),0,100);
+        energy = Mathf.Clamp(energy - _deltaTime/(0.06f*energy),0,100);
+        fun = Mathf.Clamp(fun - _deltaTime/(0.01f*fun),0,100);
+        CalculateHappiness();
         SetStats();
+       
+    }
+
+    
+    public void IncreaseHunger(float amount)
+    {
+        hunger += amount; 
+    }
+    public void IncreaseEnergy(float amount)
+    {
+        energy += amount; 
+    }
+    public void IncreaseFun(float amount)
+    {
+        fun += amount; 
+    }
+    
+     void CalculateHappiness()
+    {
+
+       happiness = (hunger + energy + fun)/3;
        
     }
 
     void SetStats(){
     statsUI.hungerValue.text = hunger.ToString();
+    statsUI.energyValue.text = energy.ToString();
+    statsUI.funValue.text = fun.ToString();
+    statsUI.happinessValue.text = happiness.ToString();
    }
 }
