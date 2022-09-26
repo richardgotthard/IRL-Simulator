@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public class StatsUI : MonoBehaviour
 {
    public Text hungerValue;
+   public Text energyValue;
+   public Text funValue;
+   public Text happinessValue;
 
 AgentStats agentStats;
 

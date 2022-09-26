@@ -1,15 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AgentStats : MonoBehaviour
 {
    StatsUI statsUI;
-   public float hunger = 50;
-   public float energy = 90;
-   public float fun = 80;
+   public float hunger = 100;
+   public float energy = 100;
+   public float fun = 100;
 
-   private int state = 0;   
+   public float happiness = 0;
+
+[Header("UI")]
+   public Image hungerBar;
+   public Image energyBar;
+   public Image funBar;
+   public Image happinessBar;
     void Start()
     {
      statsUI = GetComponent<StatsUI>();
@@ -40,18 +47,48 @@ public class AgentStats : MonoBehaviour
     void DecayNeeds(float _deltaTime)
     {
 
-        hunger -= _deltaTime;
-        energy -= _deltaTime;
-        fun -= _deltaTime;
+        hunger = Mathf.Clamp(hunger - _deltaTime/(0.02f*hunger),0,100);
+        energy = Mathf.Clamp(energy - _deltaTime/(0.06f*energy),0,100);
+        fun = Mathf.Clamp(fun - _deltaTime/(0.01f*fun),0,100);
+        CalculateHappiness();
         SetStats();
        
     }
 
-    void SetStats()
+    
+    public void IncreaseHunger(float amount)
     {
+        hunger += amount; 
+    }
+    public void IncreaseEnergy(float amount)
+    {
+        energy += amount; 
+    }
+    public void IncreaseFun(float amount)
+    {
+        fun += amount; 
+    }
+    
+     void CalculateHappiness()
+    {
+
+       happiness = (hunger + energy + fun)/3;
+       
+    }
+
+    void SetStats(){
     statsUI.hungerValue.text = hunger.ToString();
-    statsUI.hungerValue.text = energy.ToString();
-    statsUI.hungerValue.text = fun.ToString();
+    statsUI.energyValue.text = energy.ToString();
+    statsUI.funValue.text = fun.ToString();
+    statsUI.happinessValue.text = happiness.ToString();
+
+    hungerBar.fillAmount = hunger/100;
+   energyBar.fillAmount = energy/100;
+   funBar.fillAmount = fun/100;
+   happinessBar.fillAmount = happiness/100;
+
+
+
    }
 
    private void ExitState()
