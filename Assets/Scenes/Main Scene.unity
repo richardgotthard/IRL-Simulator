@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -476,6 +476,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 2784907891439519553, guid: 75521a25f23d0dd40b6cd893910dddab, type: 3}
   m_PrefabInstance: {fileID: 31006825}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &63624389 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2904323560304325858, guid: ec712c71bcba3a24c86935a2b9cd92c2, type: 3}
+  m_PrefabInstance: {fileID: 5865756946093845375}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &65849490
 PrefabInstance:
@@ -1065,6 +1070,10 @@ PrefabInstance:
     - target: {fileID: 2904323560304325858, guid: ec712c71bcba3a24c86935a2b9cd92c2, type: 3}
       propertyPath: m_Name
       value: Bed
+      objectReference: {fileID: 0}
+    - target: {fileID: 2904323560304325858, guid: ec712c71bcba3a24c86935a2b9cd92c2, type: 3}
+      propertyPath: m_TagString
+      value: Bedroom
       objectReference: {fileID: 0}
     - target: {fileID: 2904323560304325858, guid: ec712c71bcba3a24c86935a2b9cd92c2, type: 3}
       propertyPath: m_NavMeshLayer
@@ -2735,6 +2744,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0.000030517578, y: -98.3}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &606525531 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1486182516679048749, guid: b02940c0011fd9746a3c53ba65095b92, type: 3}
+  m_PrefabInstance: {fileID: 6821274443152293300}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &658260702
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4277,6 +4291,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 741e679f5c02dd14fa6002fa8b6345dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &835134291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835134281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53dd093a99b55a44d874b985799b5193, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DestinationReachedThreshold: 0.25
+  MaxMoveSpeed: 5
+  RotationSpeed: 120
+  DEBUG_UseMoveTarget: 0
+  DEBUG_MoveTarget: {fileID: 0}
+  DEBUG_ShowHeading: 0
+--- !u!195 &835134292
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835134281}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!43 &846060655
 Mesh:
   m_ObjectHideFlags: 0
@@ -13120,6 +13174,36 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2293506159794758807, guid: b02940c0011fd9746a3c53ba65095b92, type: 3}
   m_PrefabInstance: {fileID: 6821274443152293300}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4719248235757459750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606525531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 000c97ffc8243a4418f3bd06cf746b7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _DisplayName: Watch
+  _InteractionType: 0
+  _Duration: 4
+  MaxSimultaneousUsers: 1
+--- !u!114 &4719248235757459751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 606525531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b94240a6987a5e3458c657774ff1d6b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _DisplayName: 
+  _InteractionMarker: {fileID: 0}
 --- !u!1001 &5865756946093845375
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13196,6 +13280,10 @@ PrefabInstance:
       value: Food
       objectReference: {fileID: 0}
     - target: {fileID: 2904323560304325858, guid: ec712c71bcba3a24c86935a2b9cd92c2, type: 3}
+      propertyPath: m_TagString
+      value: Kitchen
+      objectReference: {fileID: 0}
+    - target: {fileID: 2904323560304325858, guid: ec712c71bcba3a24c86935a2b9cd92c2, type: 3}
       propertyPath: m_NavMeshLayer
       value: 1
       objectReference: {fileID: 0}
@@ -13223,6 +13311,10 @@ PrefabInstance:
     - target: {fileID: 1486182516679048749, guid: b02940c0011fd9746a3c53ba65095b92, type: 3}
       propertyPath: m_Name
       value: LargeObject_TV
+      objectReference: {fileID: 0}
+    - target: {fileID: 1486182516679048749, guid: b02940c0011fd9746a3c53ba65095b92, type: 3}
+      propertyPath: m_TagString
+      value: Livingroom
       objectReference: {fileID: 0}
     - target: {fileID: 1486182516679048749, guid: b02940c0011fd9746a3c53ba65095b92, type: 3}
       propertyPath: m_NavMeshLayer
@@ -13286,3 +13378,33 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2523680793214905944, guid: ec712c71bcba3a24c86935a2b9cd92c2, type: 3}
   m_PrefabInstance: {fileID: 5865756946093845375}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8242344409970558251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 63624389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 000c97ffc8243a4418f3bd06cf746b7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _DisplayName: Cook
+  _InteractionType: 0
+  _Duration: 4
+  MaxSimultaneousUsers: 1
+--- !u!114 &8242344409970558252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 63624389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b94240a6987a5e3458c657774ff1d6b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _DisplayName: Micro
+  _InteractionMarker: {fileID: 0}

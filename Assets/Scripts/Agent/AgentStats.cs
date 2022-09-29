@@ -27,21 +27,6 @@ public class AgentStats : MonoBehaviour
     void Update()
     {
         DecayNeeds(Time.deltaTime);
-        switch (state)
-        {
-            // chilling
-            case 0:
-                //FollowPlayer(); // TODO: change to some idle animation
-                //ActionSelection();
-                //if (actions.Count > 0) ExitState();
-                break;
-            // performing action
-            case 1:
-                //timeSpentOnAction += Time.deltaTime;
-                //if (timeSpentOnAction >= currentAction.timeToComplete) ExitState();
-                break;
-
-        }
     }
 
     void DecayNeeds(float _deltaTime)
@@ -90,27 +75,4 @@ public class AgentStats : MonoBehaviour
 
 
    }
-
-   private void ExitState()
-    {
-        int _state = state;
-        switch (_state)
-        {
-            // get next action and start walking to it
-            case 0:
-                //currentAction = actions.Peek();
-                //state = 2;
-                break;
-            // complete action and start chilling
-            case 1:
-                //currentAction.CompleteAction(this);
-                //state = 0;
-                break;
-
-        }
-    }
-
-   
-
-
 }
