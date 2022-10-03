@@ -25,6 +25,8 @@ public class AgentBehaviour : MonoBehaviour
         tree.PrintTree();
     }
 
+    
+
     // Update is called once per frame
     void Update()
     {

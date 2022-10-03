@@ -14,8 +14,8 @@ public class Behavior : MonoBehaviour
     public GameObject Livingroom;
     UnityEngine.AI.NavMeshAgent agent;
 
-    public enum ActionState { IDLE, WORKING}
-    ActionState state = ActionState.IDLE;
+    //public enum ActionState { IDLE, WORKING}
+    //ActionState state = ActionState.IDLE;
 
 
     // Start is called before the first frame update
