@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class AgentStats : MonoBehaviour
 {
    StatsUI statsUI;
-   public float hunger = 100;
-   public float energy = 100;
-   public float fun = 100;
+   public float hunger = 75;
+   public float energy = 75;
+   public float fun = 75;
 
    public float happiness = 0;
 
@@ -17,6 +17,7 @@ public class AgentStats : MonoBehaviour
    public Image energyBar;
    public Image funBar;
    public Image happinessBar;
+   
     void Start()
     {
      statsUI = GetComponent<StatsUI>();
