@@ -12,6 +12,7 @@ public class AgentBehaviour : MonoBehaviour
     public GameObject kitchen; 
     public GameObject bedroom;
     public GameObject livingroom;
+    public GameObject kitchen2;
     NavMeshAgent agent;
 
     public enum ActionState { IDLE, WORKING};
@@ -27,10 +28,18 @@ public class AgentBehaviour : MonoBehaviour
         tree = new BehaviourTree();
         Sequence doSomething = new Sequence("Do an activity");
         Leaf goToKitchen = new Leaf("Eat from microwave", GoToKitchen);
+        Leaf goToKitchen2 = new Leaf("Eat from toolbox", GoToKitchen2);
         Leaf goToBedroom = new Leaf("Sleep at bed", GoToBedroom);
         Leaf goToLivingroom = new Leaf("Watch some TV", GoToLivingroom);
 
-        doSomething.AddChild(goToKitchen);
+        Selector eatsomething = new Selector("Eat something");
+
+        eatsomething.AddChild(goToKitchen);
+        eatsomething.AddChild(goToKitchen2);
+
+
+        //doSomething.AddChild(goToKitchen);
+        doSomething.AddChild(eatsomething);   
         //sleep.AddChild(goToBedroom);
         //entertain.AddChild(goToLivingroom);
         doSomething.AddChild(goToBedroom);
@@ -45,6 +54,11 @@ public class AgentBehaviour : MonoBehaviour
     public Node.Status GoToKitchen()
     {
        return GoToLocation(kitchen.transform.position);
+    }
+
+    public Node.Status GoToKitchen2()
+    {
+       return GoToLocation(kitchen2.transform.position);
     }
 
      public Node.Status GoToBedroom()
