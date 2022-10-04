@@ -17,13 +17,15 @@ public class AgentBehaviour : MonoBehaviour
     public enum ActionState { IDLE, WORKING};
     ActionState state = ActionState.IDLE;
 
+    Node.Status treeStatus = Node.Status.RUNNING;
+
 
     void Start()
     {
         agent = this.GetComponent<NavMeshAgent>();
 
         tree = new BehaviourTree();
-        Node doSomething = new Node("Do an activity");
+        Sequence doSomething = new Sequence("Do an activity");
         Leaf goToKitchen = new Leaf("Eat from microwave", GoToKitchen);
         Leaf goToBedroom = new Leaf("Sleep at bed", GoToBedroom);
         Leaf goToLivingroom = new Leaf("Watch some TV", GoToLivingroom);
@@ -37,27 +39,22 @@ public class AgentBehaviour : MonoBehaviour
         doSomething.AddChild(goToLivingroom);
         tree.AddChild(doSomething);
 
-        tree.PrintTree();
-
-        tree.Process();
+        tree.PrintTree();   
     }
 
     public Node.Status GoToKitchen()
     {
-        agent.SetDestination(kitchen.transform.position);
-        return Node.Status.SUCCESS;
+       return GoToLocation(kitchen.transform.position);
     }
 
      public Node.Status GoToBedroom()
     {
-        agent.SetDestination(bedroom.transform.position);
-        return Node.Status.SUCCESS;
+       return GoToLocation(bedroom.transform.position);
     }
 
       public Node.Status GoToLivingroom()
     {
-        agent.SetDestination(livingroom.transform.position);
-        return Node.Status.SUCCESS;
+       return GoToLocation(livingroom.transform.position);
     }
 
     Node.Status GoToLocation(Vector3 destination)
@@ -82,13 +79,12 @@ public class AgentBehaviour : MonoBehaviour
     }
 
 
-
-
-    
-
     // Update is called once per frame
     void Update()
     {
-        
+        if(treeStatus == Node.Status.RUNNING)
+        {
+            treeStatus = tree.Process();
+        }
     }
 }
