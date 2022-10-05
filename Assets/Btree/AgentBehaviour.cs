@@ -8,11 +8,14 @@ public class AgentBehaviour : MonoBehaviour
 {
     // Start is called before the first frame update
 
+    AgentStats stats;
+
+
     BehaviourTree tree;
     public GameObject kitchen; 
     public GameObject bedroom;
     public GameObject livingroom;
-    public GameObject kitchen2;
+    public GameObject fridge;
     NavMeshAgent agent;
 
     public enum ActionState { IDLE, WORKING};
@@ -21,54 +24,119 @@ public class AgentBehaviour : MonoBehaviour
     Node.Status treeStatus = Node.Status.RUNNING;
 
 
+
     void Start()
     {
+        stats = GetComponent<AgentStats>();
         agent = this.GetComponent<NavMeshAgent>();
 
         tree = new BehaviourTree();
-        Sequence doSomething = new Sequence("Do an activity");
+        Selector doSomething = new Selector("Do an activity");
+        Leaf isHungryNow = new Leaf("Is hungry", isHungry);
         Leaf goToKitchen = new Leaf("Eat from microwave", GoToKitchen);
-        Leaf goToKitchen2 = new Leaf("Eat from toolbox", GoToKitchen2);
+        Leaf goToFridge = new Leaf("Go to fridge", GoToFridge);
+        Leaf isSleepyNow = new Leaf("Is hungry", isSleepy);
         Leaf goToBedroom = new Leaf("Sleep at bed", GoToBedroom);
+        Leaf isBorednow = new Leaf("Is hungry", isBored);
         Leaf goToLivingroom = new Leaf("Watch some TV", GoToLivingroom);
 
-        Selector eatsomething = new Selector("Eat something");
+        Sequence eatsomething = new Sequence("Eat something");
+        Sequence sleep = new Sequence("Go and sleep");
+        Sequence haveFun = new Sequence("Go and have fun");
 
+        //for Hunger
+        eatsomething.AddChild(isHungryNow);
+        eatsomething.AddChild(goToFridge);
         eatsomething.AddChild(goToKitchen);
-        eatsomething.AddChild(goToKitchen2);
 
+        //for Sleep
+        sleep.AddChild(isSleepyNow);
+        sleep.AddChild(goToBedroom);
+
+        //for Fun
+        haveFun.AddChild(isBorednow);
+        haveFun.AddChild(goToLivingroom);
 
         //doSomething.AddChild(goToKitchen);
         doSomething.AddChild(eatsomething);   
         //sleep.AddChild(goToBedroom);
         //entertain.AddChild(goToLivingroom);
-        doSomething.AddChild(goToBedroom);
+        doSomething.AddChild(sleep);
        // tree.AddChild(sleep);
        // tree.AddChild(entertain);
-        doSomething.AddChild(goToLivingroom);
+        doSomething.AddChild(haveFun);
+
         tree.AddChild(doSomething);
 
         tree.PrintTree();   
     }
 
-    public Node.Status GoToKitchen()
+    public Node.Status isHungry()
     {
-       return GoToLocation(kitchen.transform.position);
+        if(stats.hunger <= 90 )
+            return Node.Status.SUCCESS;
+        return Node.Status.FAILURE;
     }
 
-    public Node.Status GoToKitchen2()
+    public Node.Status isSleepy()
     {
-       return GoToLocation(kitchen2.transform.position);
+        if(stats.energy <= 90 )
+            return Node.Status.SUCCESS;
+        return Node.Status.FAILURE;
+    }
+
+    public Node.Status isBored()
+    {
+        if(stats.fun <= 90 )
+            return Node.Status.SUCCESS;
+        return Node.Status.FAILURE;
+    }
+
+    public Node.Status GoToKitchen()
+    {
+        Node.Status s = GoToLocation(kitchen.transform.position);
+
+        if(s == Node.Status.SUCCESS)
+        {
+           // agent.sleep(5000);
+            stats.IncreaseHunger(1500/stats.hunger);
+
+        }
+
+       return s;
+    }
+
+    public Node.Status GoToFridge()
+    {
+       return GoToLocation(fridge.transform.position);
     }
 
      public Node.Status GoToBedroom()
     {
-       return GoToLocation(bedroom.transform.position);
+        Node.Status s = GoToLocation(bedroom.transform.position);
+
+        if(s == Node.Status.SUCCESS)
+        {
+           // agent.sleep(5000);
+            stats.IncreaseEnergy(1500/stats.energy);
+
+        }
+
+       return s;
     }
 
       public Node.Status GoToLivingroom()
     {
-       return GoToLocation(livingroom.transform.position);
+       Node.Status s = GoToLocation(livingroom.transform.position);
+
+        if(s == Node.Status.SUCCESS)
+        {
+           // agent.sleep(5000);
+            stats.IncreaseFun(1500/stats.fun);
+
+        }
+
+       return s;
     }
 
     Node.Status GoToLocation(Vector3 destination)
@@ -99,6 +167,11 @@ public class AgentBehaviour : MonoBehaviour
         if(treeStatus == Node.Status.RUNNING)
         {
             treeStatus = tree.Process();
+
+        }
+        else{
+           
+            treeStatus = Node.Status.RUNNING;
         }
     }
 }
