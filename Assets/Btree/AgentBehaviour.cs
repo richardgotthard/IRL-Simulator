@@ -16,6 +16,7 @@ public class AgentBehaviour : MonoBehaviour
     public GameObject bedroom;
     public GameObject livingroom;
     public GameObject fridge;
+    public GameObject workstation;
     NavMeshAgent agent;
 
     public enum ActionState { IDLE, WORKING};
@@ -39,6 +40,7 @@ public class AgentBehaviour : MonoBehaviour
         Leaf goToBedroom = new Leaf("Sleep at bed", GoToBedroom);
         Leaf isBorednow = new Leaf("Is hungry", isBored);
         Leaf goToLivingroom = new Leaf("Watch some TV", GoToLivingroom);
+        Leaf goToWork = new Leaf("Do some work", GoToWorkstation);
 
         Sequence eatsomething = new Sequence("Eat something");
         Sequence sleep = new Sequence("Go and sleep");
@@ -66,6 +68,8 @@ public class AgentBehaviour : MonoBehaviour
        // tree.AddChild(entertain);
         doSomething.AddChild(haveFun);
 
+        doSomething.AddChild(goToWork);
+
         tree.AddChild(doSomething);
 
         tree.PrintTree();   
@@ -85,7 +89,7 @@ public class AgentBehaviour : MonoBehaviour
         return Node.Status.FAILURE;
     }
 
-    public Node.Status isBored()
+    public Node.Status isBored()    
     {
         if(stats.fun <= 90 )
             return Node.Status.SUCCESS;
@@ -114,10 +118,11 @@ public class AgentBehaviour : MonoBehaviour
      public Node.Status GoToBedroom()
     {
         Node.Status s = GoToLocation(bedroom.transform.position);
+        //yield new WaitForSeconds(3);
 
         if(s == Node.Status.SUCCESS)
         {
-           // agent.sleep(5000);
+             
             stats.IncreaseEnergy(1500/stats.energy);
 
         }
@@ -137,6 +142,13 @@ public class AgentBehaviour : MonoBehaviour
         }
 
        return s;
+    }
+
+      public Node.Status GoToWorkstation()
+    {
+       return GoToLocation(workstation.transform.position);
+
+    
     }
 
     Node.Status GoToLocation(Vector3 destination)
