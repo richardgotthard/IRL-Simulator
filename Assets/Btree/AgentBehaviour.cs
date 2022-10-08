@@ -22,6 +22,10 @@ public class AgentBehaviour : MonoBehaviour
     public enum ActionState { IDLE, WORKING};
     ActionState state = ActionState.IDLE;
 
+
+    float timer = 0.0f;
+    bool timerStart = false;
+
     Node.Status treeStatus = Node.Status.RUNNING;
 
 
@@ -33,13 +37,21 @@ public class AgentBehaviour : MonoBehaviour
 
         tree = new BehaviourTree();
         Selector doSomething = new Selector("Do an activity");
+
         Leaf isHungryNow = new Leaf("Is hungry", isHungry);
-        Leaf goToKitchen = new Leaf("Eat from microwave", GoToKitchen);
+        Leaf goToKitchen = new Leaf("Prepare food", GoToKitchen);
         Leaf goToFridge = new Leaf("Go to fridge", GoToFridge);
+        Leaf eat = new Leaf("Eat", Eat);
+
+
         Leaf isSleepyNow = new Leaf("Is hungry", isSleepy);
-        Leaf goToBedroom = new Leaf("Sleep at bed", GoToBedroom);
+        Leaf goToBedroom = new Leaf("Go to bed", GoToBedroom);
+        Leaf sleepNow = new Leaf("Sleep", Sleep);
+
         Leaf isBorednow = new Leaf("Is hungry", isBored);
-        Leaf goToLivingroom = new Leaf("Watch some TV", GoToLivingroom);
+        Leaf goToLivingroom = new Leaf("Go to TV", GoToLivingroom);
+        Leaf watchTV = new Leaf("Watch TV", WatchTV);
+
         Leaf goToWork = new Leaf("Do some work", GoToWorkstation);
 
         Sequence eatsomething = new Sequence("Eat something");
@@ -50,14 +62,17 @@ public class AgentBehaviour : MonoBehaviour
         eatsomething.AddChild(isHungryNow);
         eatsomething.AddChild(goToFridge);
         eatsomething.AddChild(goToKitchen);
+        eatsomething.AddChild(eat);
 
         //for Sleep
         sleep.AddChild(isSleepyNow);
         sleep.AddChild(goToBedroom);
+        sleep.AddChild(sleepNow);
 
         //for Fun
         haveFun.AddChild(isBorednow);
         haveFun.AddChild(goToLivingroom);
+        haveFun.AddChild(watchTV);
 
         //doSomething.AddChild(goToKitchen);
         doSomething.AddChild(eatsomething);   
@@ -75,39 +90,34 @@ public class AgentBehaviour : MonoBehaviour
         tree.PrintTree();   
     }
 
+    // Condition nodes
     public Node.Status isHungry()
     {
-        if(stats.hunger <= 90 )
+        if(stats.hunger <= 60 )
             return Node.Status.SUCCESS;
         return Node.Status.FAILURE;
     }
 
     public Node.Status isSleepy()
     {
-        if(stats.energy <= 90 )
+        if(stats.energy <= 30 )
             return Node.Status.SUCCESS;
         return Node.Status.FAILURE;
     }
 
     public Node.Status isBored()    
     {
-        if(stats.fun <= 90 )
+        if(stats.fun <= 75 )
             return Node.Status.SUCCESS;
         return Node.Status.FAILURE;
     }
+    /////////////////////////////////////////
 
+
+    // Location nodes
     public Node.Status GoToKitchen()
     {
-        Node.Status s = GoToLocation(kitchen.transform.position);
-
-        if(s == Node.Status.SUCCESS)
-        {
-           // agent.sleep(5000);
-            stats.IncreaseHunger(1500/stats.hunger);
-
-        }
-
-       return s;
+       return GoToLocation(kitchen.transform.position);  
     }
 
     public Node.Status GoToFridge()
@@ -115,40 +125,74 @@ public class AgentBehaviour : MonoBehaviour
        return GoToLocation(fridge.transform.position);
     }
 
-     public Node.Status GoToBedroom()
+    public Node.Status GoToBedroom()
     {
-        Node.Status s = GoToLocation(bedroom.transform.position);
-        //yield new WaitForSeconds(3);
-
-        if(s == Node.Status.SUCCESS)
-        {
-             
-            stats.IncreaseEnergy(1500/stats.energy);
-
-        }
-
-       return s;
+       return GoToLocation(bedroom.transform.position);   
     }
 
-      public Node.Status GoToLivingroom()
+    public Node.Status GoToLivingroom()
     {
-       Node.Status s = GoToLocation(livingroom.transform.position);
-
-        if(s == Node.Status.SUCCESS)
-        {
-           // agent.sleep(5000);
-            stats.IncreaseFun(1500/stats.fun);
-
-        }
-
-       return s;
+       return  GoToLocation(livingroom.transform.position);
     }
 
-      public Node.Status GoToWorkstation()
+    public Node.Status GoToWorkstation()
     {
        return GoToLocation(workstation.transform.position);
+    }
 
-    
+
+    // Activity nodes
+
+    public Node.Status Eat()
+    {  
+       Node.Status s = DoActivity(5f);
+       if(s == Node.Status.SUCCESS){
+         //stats.IncreaseHunger(1500/stats.hunger);
+         stats.ResetHunger();
+       }
+       return s;
+    }
+
+    public Node.Status Sleep()
+    {      
+       Node.Status s = DoActivity(10f);
+       if(s == Node.Status.SUCCESS){
+         //stats.IncreaseEnergy(1500/stats.energy);
+         stats.ResetEnergy();
+       }
+       return s;
+    }
+
+    public Node.Status WatchTV()
+    {     
+       Node.Status s = DoActivity(5f);
+       if(s == Node.Status.SUCCESS){
+         //stats.IncreaseFun(1500/stats.fun);
+         stats.ResetFun();
+       }
+       return s;
+    }
+    ///////////////////////////////////////////////////
+
+
+    // Reusable functions to return node status
+
+    Node.Status DoActivity(float duration)
+    {
+       
+        timer += Time.deltaTime;
+        state = ActionState.WORKING;
+
+        if(state == ActionState.WORKING)
+        {       
+            if(timer >= duration){
+                timer = 0;
+                state = ActionState.IDLE;
+                return Node.Status.SUCCESS;
+            }
+        
+        }
+        return Node.Status.RUNNING;
     }
 
     Node.Status GoToLocation(Vector3 destination)
