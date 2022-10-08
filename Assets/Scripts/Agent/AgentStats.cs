@@ -54,6 +54,19 @@ public class AgentStats : MonoBehaviour
     {
         fun += amount; 
     }
+
+    public void ResetHunger()
+    {
+        hunger = 95; 
+    }
+    public void ResetEnergy()
+    {
+        energy = 95;  
+    }
+    public void ResetFun()
+    {
+        fun = 95; 
+    }
     
      void CalculateHappiness()
     {
