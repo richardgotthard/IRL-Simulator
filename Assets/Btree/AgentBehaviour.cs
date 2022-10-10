@@ -17,11 +17,16 @@ public class AgentBehaviour : MonoBehaviour
     public GameObject livingroom;
     public GameObject fridge;
     public GameObject workstation;
+    public GameObject alarmclock;
     NavMeshAgent agent;
 
     public enum ActionState { IDLE, WORKING};
     ActionState state = ActionState.IDLE;
 
+   // public enum AlarmState { ON, OFF};
+   // AlarmState alarm;
+    //bool _alarm = false;
+    Alarm alarmscript;
 
     float timer = 0.0f;
     bool timerStart = false;
@@ -29,20 +34,28 @@ public class AgentBehaviour : MonoBehaviour
     Node.Status treeStatus = Node.Status.RUNNING;
 
 
-
     void Start()
     {
+        Debug.Log(alarmclock.GetComponent<Alarm>().alarm);
+
+        alarmscript = alarmclock.GetComponent<Alarm>();
         stats = GetComponent<AgentStats>();
         agent = this.GetComponent<NavMeshAgent>();
 
         tree = new BehaviourTree();
+        Selector root = new Selector("Check alarm");
         Selector doSomething = new Selector("Do an activity");
+
+        Sequence emergency = new Sequence("Emergency");
+
+        Leaf checkAlarm = new Leaf("Checks for alarm", alarmIsOn);
+        Leaf goToAlarm = new Leaf("Is hungry", GoToAlarm);
+        Leaf fixAlarm = new Leaf("Is hungry", TurnOffAlarm);
 
         Leaf isHungryNow = new Leaf("Is hungry", isHungry);
         Leaf goToKitchen = new Leaf("Prepare food", GoToKitchen);
         Leaf goToFridge = new Leaf("Go to fridge", GoToFridge);
         Leaf eat = new Leaf("Eat", Eat);
-
 
         Leaf isSleepyNow = new Leaf("Is hungry", isSleepy);
         Leaf goToBedroom = new Leaf("Go to bed", GoToBedroom);
@@ -75,7 +88,7 @@ public class AgentBehaviour : MonoBehaviour
         haveFun.AddChild(watchTV);
 
         //doSomething.AddChild(goToKitchen);
-        doSomething.AddChild(eatsomething);   
+        doSomething.AddChild(eatsomething);
         //sleep.AddChild(goToBedroom);
         //entertain.AddChild(goToLivingroom);
         doSomething.AddChild(sleep);
@@ -85,15 +98,22 @@ public class AgentBehaviour : MonoBehaviour
 
         doSomething.AddChild(goToWork);
 
-        tree.AddChild(doSomething);
+        emergency.AddChild(checkAlarm);
+        emergency.AddChild(goToAlarm);
+        emergency.AddChild(fixAlarm);
+        //Check for alarm
+        root.AddChild(emergency);
+        root.AddChild(doSomething);
+        
 
+        tree.AddChild(root);
         tree.PrintTree();   
     }
 
     // Condition nodes
     public Node.Status isHungry()
     {
-        if(stats.hunger <= 60 )
+        if(stats.hunger <= 60)
             return Node.Status.SUCCESS;
         return Node.Status.FAILURE;
     }
@@ -107,9 +127,20 @@ public class AgentBehaviour : MonoBehaviour
 
     public Node.Status isBored()    
     {
-        if(stats.fun <= 75 )
+        if(stats.fun <= 70)
             return Node.Status.SUCCESS;
         return Node.Status.FAILURE;
+    }
+
+     public Node.Status alarmIsOn()    
+    {
+        if(alarmscript.alarm == true){
+           // Debug.Log("true");
+            return Node.Status.SUCCESS;
+        } else{
+        //Debug.Log("false");
+        return Node.Status.FAILURE;
+        }
     }
     /////////////////////////////////////////
 
@@ -140,6 +171,11 @@ public class AgentBehaviour : MonoBehaviour
        return GoToLocation(workstation.transform.position);
     }
 
+      public Node.Status GoToAlarm()
+    {
+       return GoToLocation(alarmclock.transform.position);
+    }
+
 
     // Activity nodes
 
@@ -166,12 +202,25 @@ public class AgentBehaviour : MonoBehaviour
     public Node.Status WatchTV()
     {     
        Node.Status s = DoActivity(5f);
+
        if(s == Node.Status.SUCCESS){
          //stats.IncreaseFun(1500/stats.fun);
          stats.ResetFun();
        }
        return s;
     }
+
+    public Node.Status TurnOffAlarm()
+    {     
+       Node.Status s = DoActivity(5f);
+
+       if(s == Node.Status.SUCCESS)
+       {
+            alarmscript.alarm = false;
+       }
+       return s;
+    }
+
     ///////////////////////////////////////////////////
 
 
@@ -194,6 +243,8 @@ public class AgentBehaviour : MonoBehaviour
         }
         return Node.Status.RUNNING;
     }
+
+   
 
     Node.Status GoToLocation(Vector3 destination)
     {
@@ -220,6 +271,7 @@ public class AgentBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       // treeStatus = tree.Process();
         if(treeStatus == Node.Status.RUNNING)
         {
             treeStatus = tree.Process();
