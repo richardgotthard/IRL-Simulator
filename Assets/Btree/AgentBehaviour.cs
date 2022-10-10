@@ -10,6 +10,7 @@ public class AgentBehaviour : MonoBehaviour
 
     AgentStats stats;
 
+    Alarm alarmscript;
 
     BehaviourTree tree;
     public GameObject kitchen; 
@@ -22,12 +23,7 @@ public class AgentBehaviour : MonoBehaviour
 
     public enum ActionState { IDLE, WORKING};
     ActionState state = ActionState.IDLE;
-
-   // public enum AlarmState { ON, OFF};
-   // AlarmState alarm;
-    //bool _alarm = false;
-    Alarm alarmscript;
-
+   
     float timer = 0.0f;
     bool timerStart = false;
 
@@ -36,8 +32,6 @@ public class AgentBehaviour : MonoBehaviour
 
     void Start()
     {
-        Debug.Log(alarmclock.GetComponent<Alarm>().alarm);
-
         alarmscript = alarmclock.GetComponent<Alarm>();
         stats = GetComponent<AgentStats>();
         agent = this.GetComponent<NavMeshAgent>();
@@ -173,7 +167,7 @@ public class AgentBehaviour : MonoBehaviour
 
       public Node.Status GoToAlarm()
     {
-       return GoToLocation(alarmclock.transform.position);
+       return GoToLocationAlarm(alarmclock.transform.position);
     }
 
 
@@ -232,16 +226,24 @@ public class AgentBehaviour : MonoBehaviour
         timer += Time.deltaTime;
         state = ActionState.WORKING;
 
-        if(state == ActionState.WORKING)
-        {       
-            if(timer >= duration){
-                timer = 0;
-                state = ActionState.IDLE;
-                return Node.Status.SUCCESS;
+       if(alarmscript.alarm == true)
+        {
+            if(state == ActionState.WORKING )
+            {       
+                if(timer >= duration)
+                {
+                    timer = 0;
+                    state = ActionState.IDLE;
+                    return Node.Status.SUCCESS;
+                }
+            
             }
-        
+            return Node.Status.RUNNING;
         }
-        return Node.Status.RUNNING;
+       else
+        {
+            return Node.Status.FAILURE;
+        }
     }
 
    
@@ -249,22 +251,55 @@ public class AgentBehaviour : MonoBehaviour
     Node.Status GoToLocation(Vector3 destination)
     {
         float distanceToTarget = Vector3.Distance(destination, this.transform.position);
-        if (state == ActionState.IDLE)
-        {
-            agent.SetDestination(destination);
-            state = ActionState.WORKING;
+        if (alarmscript.alarm == false)
+       {
+            if (state == ActionState.IDLE)
+            {
+                agent.SetDestination(destination);
+                state = ActionState.WORKING;
+            }
+            else if(Vector3.Distance(agent.pathEndPosition, destination) >= 2)
+            {
+                state = ActionState.IDLE;
+                return Node.Status.FAILURE;
+            }
+            else if (distanceToTarget < 2)
+            {
+                state = ActionState.IDLE;
+                return Node.Status.SUCCESS;
+            }
+            return Node.Status.RUNNING;
         }
-        else if(Vector3.Distance(agent.pathEndPosition, destination) >= 2)
-        {
-            state = ActionState.IDLE;
+        else{
             return Node.Status.FAILURE;
         }
-        else if (distanceToTarget < 2)
-        {
-            state = ActionState.IDLE;
-            return Node.Status.SUCCESS;
-        }
-        return Node.Status.RUNNING;
+    }
+
+    Node.Status GoToLocationAlarm(Vector3 destination)
+    {
+        float distanceToTarget = Vector3.Distance(destination, this.transform.position);
+        //if (alarmscript.alarm == false)
+       // {
+            if (state == ActionState.IDLE)
+            {
+                agent.SetDestination(destination);
+                state = ActionState.WORKING;
+            }
+            else if(Vector3.Distance(agent.pathEndPosition, destination) >= 2)
+            {
+                state = ActionState.IDLE;
+                return Node.Status.FAILURE;
+            }
+            else if (distanceToTarget < 2)
+            {
+                state = ActionState.IDLE;
+                return Node.Status.SUCCESS;
+            }
+            return Node.Status.RUNNING;
+        // }
+        // else{
+        //     return Node.Status.FAILURE;
+        // }
     }
 
 

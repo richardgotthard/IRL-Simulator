@@ -15,9 +15,9 @@ public class Alarm : MonoBehaviour
 
     public void setAlarm(){
 
-        alarm =! alarm;
+        alarm = true;
 
-       // Debug.Log(alarm);
+       Debug.Log(alarm);
     }
 
     
