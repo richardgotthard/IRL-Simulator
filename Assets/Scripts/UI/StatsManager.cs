@@ -8,7 +8,7 @@ public class StatsManager : MonoBehaviour
     Text TextScoreUI;
 
     private float _stat;
-  public float Stat{ 
+    public float Stat{ 
     get { return _stat; } 
     set{
         _stat =value;
