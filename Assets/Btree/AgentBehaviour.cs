@@ -12,10 +12,13 @@ public class AgentBehaviour : MonoBehaviour
 
     Alarm alarmscript;
 
+    //Rigidbody m_Rigidbody;
+
     BehaviourTree tree;
     public GameObject kitchen; 
     public GameObject bedroom;
     public GameObject livingroom;
+    public GameObject bathroom;
     public GameObject fridge;
     public GameObject workstation;
     public GameObject alarmclock;
@@ -32,6 +35,7 @@ public class AgentBehaviour : MonoBehaviour
 
     void Start()
     {
+        //m_Rigidbody = GetComponent<Rigidbody>();
         alarmscript = alarmclock.GetComponent<Alarm>();
         stats = GetComponent<AgentStats>();
         agent = this.GetComponent<NavMeshAgent>();
@@ -45,6 +49,10 @@ public class AgentBehaviour : MonoBehaviour
         Leaf checkAlarm = new Leaf("Checks for alarm", alarmIsOn);
         Leaf goToAlarm = new Leaf("Is hungry", GoToAlarm);
         Leaf fixAlarm = new Leaf("Is hungry", TurnOffAlarm);
+
+        Leaf needsBathroom = new Leaf("Needs bathroom", isInNeedOfBathroom);
+        Leaf goToBathroom = new Leaf("Go to bathroom", GoToBathroom);
+        Leaf useBathroomNow = new Leaf("Use bathroom", UseBathroom);
 
         Leaf isHungryNow = new Leaf("Is hungry", isHungry);
         Leaf goToKitchen = new Leaf("Prepare food", GoToKitchen);
@@ -64,6 +72,7 @@ public class AgentBehaviour : MonoBehaviour
         Sequence eatsomething = new Sequence("Eat something");
         Sequence sleep = new Sequence("Go and sleep");
         Sequence haveFun = new Sequence("Go and have fun");
+        Sequence useBathroom = new Sequence("Use bathroom");
 
         //for Hunger
         eatsomething.AddChild(isHungryNow);
@@ -81,25 +90,28 @@ public class AgentBehaviour : MonoBehaviour
         haveFun.AddChild(goToLivingroom);
         haveFun.AddChild(watchTV);
 
-        //doSomething.AddChild(goToKitchen);
-        doSomething.AddChild(eatsomething);
-        //sleep.AddChild(goToBedroom);
-        //entertain.AddChild(goToLivingroom);
-        doSomething.AddChild(sleep);
-       // tree.AddChild(sleep);
-       // tree.AddChild(entertain);
-        doSomething.AddChild(haveFun);
+         //for Bladder
+        useBathroom.AddChild(needsBathroom);
+        useBathroom.AddChild(goToBathroom);
+        useBathroom.AddChild(useBathroomNow);
 
+        //add all needs
+        doSomething.AddChild(eatsomething);
+        doSomething.AddChild(sleep);
+        doSomething.AddChild(haveFun);
+        doSomething.AddChild(useBathroom);
         doSomething.AddChild(goToWork);
 
+        //add dependency for alarm
         emergency.AddChild(checkAlarm);
         emergency.AddChild(goToAlarm);
         emergency.AddChild(fixAlarm);
+
         //Check for alarm
         root.AddChild(emergency);
         root.AddChild(doSomething);
         
-
+        //add tree structure to tree
         tree.AddChild(root);
         tree.PrintTree();   
     }
@@ -107,7 +119,7 @@ public class AgentBehaviour : MonoBehaviour
     // Condition nodes
     public Node.Status isHungry()
     {
-        if(stats.hunger <= 60)
+        if(stats.hunger <= 90)
             return Node.Status.SUCCESS;
         return Node.Status.FAILURE;
     }
@@ -126,13 +138,20 @@ public class AgentBehaviour : MonoBehaviour
         return Node.Status.FAILURE;
     }
 
+     public Node.Status isInNeedOfBathroom()    
+    {
+        if(stats.hygiene <= 70)
+            return Node.Status.SUCCESS;
+        return Node.Status.FAILURE;
+    }
+
      public Node.Status alarmIsOn()    
     {
         if(alarmscript.alarm == true){
-           // Debug.Log("true");
+        
             return Node.Status.SUCCESS;
         } else{
-        //Debug.Log("false");
+        
         return Node.Status.FAILURE;
         }
     }
@@ -158,6 +177,11 @@ public class AgentBehaviour : MonoBehaviour
     public Node.Status GoToLivingroom()
     {
        return  GoToLocation(livingroom.transform.position);
+    }
+
+     public Node.Status GoToBathroom()
+    {
+       return  GoToLocation(bathroom.transform.position);
     }
 
     public Node.Status GoToWorkstation()
@@ -204,9 +228,20 @@ public class AgentBehaviour : MonoBehaviour
        return s;
     }
 
-    public Node.Status TurnOffAlarm()
+     public Node.Status UseBathroom()
     {     
        Node.Status s = DoActivity(5f);
+
+       if(s == Node.Status.SUCCESS){
+         //stats.IncreaseFun(1500/stats.fun);
+         stats.ResetBladder();
+       }
+       return s;
+    }
+
+    public Node.Status TurnOffAlarm()
+    {     
+       Node.Status s = DoActivity(3f);
 
        if(s == Node.Status.SUCCESS)
        {
@@ -226,8 +261,8 @@ public class AgentBehaviour : MonoBehaviour
         timer += Time.deltaTime;
         state = ActionState.WORKING;
 
-       if(alarmscript.alarm == true)
-        {
+    //    if(alarmscript.alarm == true)
+    //     {
             if(state == ActionState.WORKING )
             {       
                 if(timer >= duration)
@@ -239,11 +274,11 @@ public class AgentBehaviour : MonoBehaviour
             
             }
             return Node.Status.RUNNING;
-        }
-       else
-        {
-            return Node.Status.FAILURE;
-        }
+    //     }
+    //    else
+    //     {
+    //         return Node.Status.RUNNING;
+    //     }
     }
 
    
@@ -278,8 +313,7 @@ public class AgentBehaviour : MonoBehaviour
     Node.Status GoToLocationAlarm(Vector3 destination)
     {
         float distanceToTarget = Vector3.Distance(destination, this.transform.position);
-        //if (alarmscript.alarm == false)
-       // {
+     
             if (state == ActionState.IDLE)
             {
                 agent.SetDestination(destination);
@@ -296,10 +330,7 @@ public class AgentBehaviour : MonoBehaviour
                 return Node.Status.SUCCESS;
             }
             return Node.Status.RUNNING;
-        // }
-        // else{
-        //     return Node.Status.FAILURE;
-        // }
+  
     }
 
 
@@ -310,7 +341,7 @@ public class AgentBehaviour : MonoBehaviour
         if(treeStatus == Node.Status.RUNNING)
         {
             treeStatus = tree.Process();
-
+            //Debug.Log(tree);
         }
         else{
            

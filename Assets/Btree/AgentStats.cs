@@ -7,6 +7,7 @@ public class AgentStats : MonoBehaviour
 {
    StatsUI statsUI;
    public float hunger = 75;
+   public float hygiene = 75;
    public float energy = 75;
    public float fun = 75;
 
@@ -14,9 +15,10 @@ public class AgentStats : MonoBehaviour
 
 [Header("UI")]
    public Image hungerBar;
+   public Image hygieneBar;
    public Image energyBar;
    public Image funBar;
-   public Image happinessBar;
+  // public Image happinessBar;
    
     void Start()
     {
@@ -32,11 +34,11 @@ public class AgentStats : MonoBehaviour
 
     void DecayNeeds(float _deltaTime)
     {
-
+        hygiene = Mathf.Clamp(hygiene - _deltaTime/(0.04f*hygiene),0,100);
         hunger = Mathf.Clamp(hunger - _deltaTime/(0.02f*hunger),0,100);
         energy = Mathf.Clamp(energy - _deltaTime/(0.06f*energy),0,100);
         fun = Mathf.Clamp(fun - _deltaTime/(0.01f*fun),0,100);
-        CalculateHappiness();
+       // CalculateHappiness();
         SetStats();
        
     }
@@ -54,6 +56,10 @@ public class AgentStats : MonoBehaviour
     {
         fun += amount; 
     }
+    public void IncreaseBladder(float amount)
+    {
+        hygiene += amount; 
+    }
 
     public void ResetHunger()
     {
@@ -62,31 +68,35 @@ public class AgentStats : MonoBehaviour
     public void ResetEnergy()
     {
         energy = 95;  
+
     }
     public void ResetFun()
     {
         fun = 95; 
     }
-    
-     void CalculateHappiness()
+    public void ResetBladder()
     {
-
-       happiness = (hunger + energy + fun)/3;
-       
+        hygiene = 95; 
     }
+    
+    //  void CalculateHappiness()
+    // {
+    //    happiness = (hunger + energy + fun + hygiene)/3;
+    // }
 
-    void SetStats(){
+    void SetStats()
+    {
     statsUI.hungerValue.text = hunger.ToString();
     statsUI.energyValue.text = energy.ToString();
     statsUI.funValue.text = fun.ToString();
-    statsUI.happinessValue.text = happiness.ToString();
+    statsUI.hygieneValue.text = hygiene.ToString();
+   // statsUI.happinessValue.text = happiness.ToString();
 
     hungerBar.fillAmount = hunger/100;
-   energyBar.fillAmount = energy/100;
-   funBar.fillAmount = fun/100;
-   happinessBar.fillAmount = happiness/100;
-
-
+    energyBar.fillAmount = energy/100;
+    funBar.fillAmount = fun/100;
+    hygieneBar.fillAmount = hygiene/100;
+  //  happinessBar.fillAmount = happiness/100;
 
    }
 }

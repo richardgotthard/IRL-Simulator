@@ -8,9 +8,9 @@ public class StatsUI : MonoBehaviour
    public Text hungerValue;
    public Text energyValue;
    public Text funValue;
-   public Text happinessValue;
+   public Text hygieneValue;
 
-AgentStats agentStats;
+   AgentStats agentStats;
 
    void Start()
    {
